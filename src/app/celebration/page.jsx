@@ -142,7 +142,7 @@ export default function BirthdayWish() {
               <div className="flex justify-center gap-8 mt-10">
                 <a href="/" className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition">
                   Back to Home
-                </a>
+                </a> <br/>
                 <a href="/wishes" className="px-6 py-2 bg-pink-500 hover:bg-pink-600 rounded-full text-white transition">
                   Next Page
                 </a>
