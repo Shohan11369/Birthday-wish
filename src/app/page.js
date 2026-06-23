@@ -2,12 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
-  const [isActive, setIsActive] = useState(false); // 🔥 ADD ONLY THIS
-  const router = useRouter();
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     const targetDate = new Date("2026-06-23T23:59:59").getTime();
@@ -18,9 +16,8 @@ export default function Home() {
 
       if (diff <= 0) {
         clearInterval(interval);
-        setIsActive(true); // 🔥 BUTTON ENABLE
-
-        router.push("/celebration"); // auto redirect
+        setIsActive(true);
+        setTimeLeft({ d: 0, h: 0, m: 0, s: 0 }); // Set to 0 when finished
         return;
       }
 
@@ -33,7 +30,7 @@ export default function Home() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [router]);
+  }, []);
 
   return (
     <main
@@ -81,7 +78,7 @@ export default function Home() {
         }}
       >
         <h1 style={{ fontSize: "1rem", marginBottom: "15px", fontWeight: "300" }}>
-          Counting down to the Special Day
+          {isActive ? "The time has arrived!" : "Counting down to the Special Day"}
         </h1>
 
         <div
@@ -108,7 +105,7 @@ export default function Home() {
               }}
             >
               <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#ffd700" }}>
-                {item.val}
+                {isActive ? 0 : item.val}
               </div>
               <div style={{ fontSize: "0.6rem", textTransform: "uppercase" }}>
                 {item.label}
@@ -117,8 +114,7 @@ export default function Home() {
           ))}
         </div>
 
-        {/* 🔥 ONLY BUTTON CHANGE */}
-        <Link href="/celebration">
+        <Link href={isActive ? "/celebration" : "#"}>
           <button
             disabled={!isActive}
             style={{
@@ -130,9 +126,10 @@ export default function Home() {
               fontWeight: "bold",
               cursor: isActive ? "pointer" : "not-allowed",
               opacity: isActive ? 1 : 0.5,
+              transition: "0.3s",
             }}
           >
-            Next Page
+            {isActive ? "Next Page" : "Locked"}
           </button>
         </Link>
       </div>
