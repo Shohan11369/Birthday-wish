@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+.clip{
+clip-path:polygon(
+0 0,
+100% 0,
+85% 75%,
+50% 100%,
+15% 75%
+);
+}
+
 @layer utilities {
   .animate-slow-zoom {
     animation: zoom 20s infinite alternate;
