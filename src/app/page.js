@@ -1,65 +1,141 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
+  const [isActive, setIsActive] = useState(false); // 🔥 ADD ONLY THIS
+  const router = useRouter();
+
+  useEffect(() => {
+    const targetDate = new Date("2026-06-23T23:59:59").getTime();
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        clearInterval(interval);
+        setIsActive(true); // 🔥 BUTTON ENABLE
+
+        router.push("/celebration"); // auto redirect
+        return;
+      }
+
+      setTimeLeft({
+        d: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        h: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        m: Math.floor((diff / 1000 / 60) % 60),
+        s: Math.floor((diff / 1000) % 60),
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [router]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <main
+      style={{
+        width: "100vw",
+        height: "100vh",
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        overflow: "hidden",
+      }}
+    >
+      {/* Background */}
+      <img
+        src="/bg3.png"
+        alt="Background"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          backgroundColor: "#000",
+          zIndex: -1,
+        }}
+      />
+
+      {/* Glass box */}
+      <div
+        style={{
+          background: "rgba(0, 0, 0, 0.5)",
+          padding: "1.5rem",
+          borderRadius: "20px",
+          textAlign: "center",
+          color: "#fff",
+          backdropFilter: "blur(12px)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+          width: "90%",
+          maxWidth: "400px",
+          marginBottom: "20px",
+        }}
+      >
+        <h1 style={{ fontSize: "1rem", marginBottom: "15px", fontWeight: "300" }}>
+          Counting down to the Special Day
+        </h1>
+
+        <div
+          style={{
+            display: "flex",
+            gap: "10px",
+            justifyContent: "center",
+            marginBottom: "20px",
+          }}
+        >
+          {[
+            { label: "Days", val: timeLeft.d },
+            { label: "Hours", val: timeLeft.h },
+            { label: "Min", val: timeLeft.m },
+            { label: "Sec", val: timeLeft.s },
+          ].map((item, index) => (
+            <div
+              key={index}
+              style={{
+                background: "rgba(255,255,255,0.2)",
+                padding: "8px",
+                borderRadius: "10px",
+                minWidth: "50px",
+              }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#ffd700" }}>
+                {item.val}
+              </div>
+              <div style={{ fontSize: "0.6rem", textTransform: "uppercase" }}>
+                {item.label}
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* 🔥 ONLY BUTTON CHANGE */}
+        <Link href="/celebration">
+          <button
+            disabled={!isActive}
+            style={{
+              background: isActive ? "#ffd700" : "#555",
+              color: isActive ? "#000" : "#999",
+              border: "none",
+              padding: "10px 25px",
+              borderRadius: "10px",
+              fontWeight: "bold",
+              cursor: isActive ? "pointer" : "not-allowed",
+              opacity: isActive ? 1 : 0.5,
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            Next Page
+          </button>
+        </Link>
+      </div>
+    </main>
   );
 }
