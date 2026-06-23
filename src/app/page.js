@@ -47,7 +47,7 @@ export default function Home() {
     >
       {/* Background */}
       <img
-        src="/bg3.png"
+        src="/bg4.png"
         alt="Background"
         style={{
           position: "absolute",
